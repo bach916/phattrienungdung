@@ -1,0 +1,62 @@
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: pink;
+    color: white;
+    left: auto;
+    top: auto;
+    right: 300px;
+    zoom: 80%;
+}
+h1 {
+    color: red;
+    text-align: center;
+    width: 100%;
+    color : blue;
+}
+img{
+    display: 220px;
+    margin-left: center;
+    margin-right: center;
+    left: center;
+    right: 150px;
+    bottom:0%;
+    top:auto;
+}
+
+img{
+    width: 300px;
+    height: 200px;
+    top: 50px;
+    left: 400px;
+    right: 1px;
+    bottom: 200px
+}
+hinh3{
+    width: 500px;
+    height: 200px;
+    top: 50px;
+    left:400px;
+    right: 50px;
+    bottom: 200px
+} 
+.ptn{
+    color: black;
+    font-size: 20px;
+    text-align: center;
+}
+however{
+    color: white;
+    font-size: 25px;
+    text-align: center;
+}
+ptn1{
+    color: black;
+    font-size: 20px;
+    text-align: center;
+}
+p1{
+    color: white;
+    font-size: 25px;
+    text-align: center;
+}
