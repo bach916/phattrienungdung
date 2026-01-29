@@ -1,0 +1,30 @@
+/* styles.css - Có thể thêm style tùy chỉnh nếu cần, Tailwind đã xử lý hầu hết */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+  }
+  
+  button {
+    transition: all 0.2s ease;
+  }
+  
+  .delete-btn {
+    transition: color 0.2s ease;
+  }
+  
+  .delete-btn:hover {
+    color: #dc2626;
+    text-decoration: underline;
+  }
+  
+  /* Loading spinner (nếu muốn thêm sau) */
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100px;
+  }
