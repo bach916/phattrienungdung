@@ -16,17 +16,7 @@ import {
   orderBy, 
   serverTimestamp 
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBQsh2KAXZP_7WfSC_YUJnrUTgL_qKJmdc",
-  authDomain: "phamngocbach-10a0c.firebaseapp.com",
-  projectId: "phamngocbach-10a0c",
-  storageBucket: "phamngocbach-10a0c.firebasestorage.app",
-  messagingSenderId: "554907446263",
-  appId: "1:554907446263:web:839299a8b2b500dc3c9cf2",
-  measurementId: "G-0H222HXRCN"
-  // Nếu config thay đổi, copy lại từ Firebase Console → Project settings → Your apps
-};
+import { firebaseConfig } from "./firebaseConfig";
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
@@ -157,3 +147,33 @@ function updateSummary(income, expense) {
     ? 'text-4xl font-bold text-blue-700 mt-2' 
     : 'text-4xl font-bold text-red-700 mt-2';
 }
+// Auth state chung cho cả hai trang
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+      currentUser = user;  // cho trang điểm thi
+      // hoặc auth.currentUser cho trang quỹ lớp
+  
+      document.getElementById('user-email').textContent = user.email;
+      document.getElementById('user-email').classList.remove('hidden');
+      document.getElementById('logout-btn').classList.remove('hidden');
+  
+      // Load dữ liệu tương ứng
+      if (document.getElementById('scores-list')) loadScores();      // trang điểm thi
+      if (document.getElementById('fund-list')) loadFund();          // trang quỹ lớp
+    } else {
+      // Chưa login → redirect về trang chính để login
+      document.getElementById('user-email').classList.add('hidden');
+      document.getElementById('logout-btn').classList.add('hidden');
+      
+      if (window.location.pathname.includes('fund.html')) {
+        alert("Vui lòng đăng nhập để truy cập Quỹ Lớp!");
+        window.location.href = "index.html";
+      }
+    }
+  });
+  
+  // Đăng xuất chung
+  document.getElementById('logout-btn')?.addEventListener('click', async () => {
+    await signOut(auth);
+    window.location.href = "index.html";
+  });

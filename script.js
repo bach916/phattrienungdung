@@ -203,3 +203,33 @@ async function loadScores() {
     scoresList.innerHTML = `<p class="text-red-600 text-center">Lỗi: ${err.message}</p>`;
   }
 }
+// Auth state chung cho cả hai trang
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    currentUser = user;  // cho trang điểm thi
+    // hoặc auth.currentUser cho trang quỹ lớp
+
+    document.getElementById('user-email').textContent = user.email;
+    document.getElementById('user-email').classList.remove('hidden');
+    document.getElementById('logout-btn').classList.remove('hidden');
+
+    // Load dữ liệu tương ứng
+    if (document.getElementById('scores-list')) loadScores();      // trang điểm thi
+    if (document.getElementById('fund-list')) loadFund();          // trang quỹ lớp
+  } else {
+    // Chưa login → redirect về trang chính để login
+    document.getElementById('user-email').classList.add('hidden');
+    document.getElementById('logout-btn').classList.add('hidden');
+    
+    if (window.location.pathname.includes('fund.html')) {
+      alert("Vui lòng đăng nhập để truy cập Quỹ Lớp!");
+      window.location.href = "index.html";
+    }
+  }
+});
+
+// Đăng xuất chung
+document.getElementById('logout-btn')?.addEventListener('click', async () => {
+  await signOut(auth);
+  window.location.href = "index.html";
+});
