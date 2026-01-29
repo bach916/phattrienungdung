@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quản lý Quỹ Lớp - Bách</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="fund-styles.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+
+  <div class="max-w-4xl mx-auto mt-10 p-6 bg-white rounded-xl shadow-xl">
+    <div class="flex justify-between items-center mb-8">
+      <h1 class="text-3xl font-bold text-indigo-800">Quản lý Quỹ Lớp</h1>
+      <div>
+        <span id="user-email" class="mr-4 text-gray-700 font-medium"></span>
+        <a href="index.html" class="text-blue-600 hover:underline mr-4">← Về Điểm thi</a>
+        <button id="logout-btn" class="bg-red-600 text-white px-5 py-2 rounded-lg hover:bg-red-700 transition">Đăng xuất</button>
+      </div>
+    </div>
+
+    <!-- Form thêm khoản -->
+    <form id="fund-form" class="mb-10 bg-gray-100 p-6 rounded-lg">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <select id="fund-type" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500">
+          <option value="">Chọn loại</option>
+          <option value="thu">Thu</option>
+          <option value="chi">Chi</option>
+        </select>
+        <input id="fund-desc" type="text" placeholder="Mô tả khoản (VD: Thu tiền áo lớp)" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"/>
+        <input id="fund-amount" type="number" step="1000" min="0" placeholder="Số tiền (VNĐ)" required class="p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"/>
+        <button type="submit" class="bg-indigo-600 text-white font-medium p-3 rounded-lg hover:bg-indigo-700 transition">Thêm khoản</button>
+      </div>
+    </form>
+
+    <!-- Tổng hợp -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div class="bg-green-50 p-6 rounded-xl shadow">
+        <h3 class="text-lg font-semibold text-green-800">Tổng thu</h3>
+        <p id="total-income" class="text-4xl font-bold text-green-700 mt-2">0 ₫</p>
+      </div>
+      <div class="bg-red-50 p-6 rounded-xl shadow">
+        <h3 class="text-lg font-semibold text-red-800">Tổng chi</h3>
+        <p id="total-expense" class="text-4xl font-bold text-red-700 mt-2">0 ₫</p>
+      </div>
+      <div class="bg-blue-50 p-6 rounded-xl shadow">
+        <h3 class="text-lg font-semibold text-blue-800">Số dư quỹ</h3>
+        <p id="balance" class="text-4xl font-bold mt-2">0 ₫</p>
+      </div>
+    </div>
+
+    <!-- Danh sách giao dịch -->
+    <div id="fund-list" class="space-y-4"></div>
+  </div>
+
+  <!-- Firebase SDK -->
+  <script type="module" src="fund-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+/* fund-styles.css */
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+  }
+  
+  input, select {
+    transition: all 0.2s ease;
+  }
+  
+  button {
+    transition: all 0.2s ease;
+  }
+  
+  .delete-btn {
+    transition: color 0.2s ease;
+  }
+  
+  .delete-btn:hover {
+    color: #b91c1c !important;
+    text-decoration: underline;
+  }
