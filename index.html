@@ -7,127 +7,29 @@
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
-  
   <style>
-    :root {
-      --primary: #c3996b;
-      --dark: #111;
-      --red: #e63939;
-    }
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f8f1e9;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: var(--dark);
-      color: white;
-      padding: 1rem 5%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .logo {
-      font-size: 1.8rem;
-      font-weight: bold;
-      color: var(--primary);
-    }
-    .auth-btn {
-      background: var(--primary);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 30px;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .admin-btn {
-      background: var(--red);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 30px;
-      text-decoration: none;
-      font-weight: bold;
-      margin-left: 15px;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 40px auto;
-      padding: 0 5%;
-    }
-    .hero {
-      text-align: center;
-      padding: 60px 20px;
-      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://source.unsplash.com/random/1600x900/?luxury-watch');
-      background-size: cover;
-      color: white;
-      border-radius: 15px;
-      margin-bottom: 40px;
-    }
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 25px;
-    }
-    .product-card {
-      background: white;
-      border-radius: 15px;
-      overflow: hidden;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .product-card img {
-      width: 100%;
-      height: 250px;
-      object-fit: cover;
-    }
-    .product-info {
-      padding: 15px;
-    }
+    :root { --primary: #c3996b; --dark: #111; }
+    body { font-family: 'Segoe UI', sans-serif; background: #f8f1e9; margin:0; }
+    header { background: var(--dark); color: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.8rem; font-weight: bold; color: var(--primary); }
+    .auth-btn { background: var(--primary); color: white; padding: 10px 20px; border-radius: 30px; border: none; cursor: pointer; }
+    .admin-btn { background: #e63939; color: white; padding: 10px 20px; border-radius: 30px; text-decoration: none; }
   </style>
 </head>
 <body>
-
   <header>
     <div class="logo">WatchStore ⌚</div>
-    
-    <div style="display: flex; align-items: center;">
-      <div id="auth-section">
-        <!-- Nút đăng nhập sẽ được JS thay đổi -->
-      </div>
-      <a href="admin.html" class="admin-btn">🔧 Vào Trang Admin</a>
-    </div>
+    <div id="auth-section"></div>
   </header>
 
-  <div class="container">
-    <div class="hero">
-      <h1 style="font-size: 3.5rem; margin-bottom: 10px;">Đồng Hồ Cao Cấp</h1>
-      <p style="font-size: 1.3rem;">Khám phá bộ sưu tập đồng hồ sang trọng nhất 2026</p>
-    </div>
-
-    <h2 style="text-align: center; margin-bottom: 30px;">Sản phẩm nổi bật</h2>
-    <div class="products-grid" id="products-grid">
-      <!-- Sản phẩm sẽ được load bằng JavaScript -->
-    </div>
-  </div>
-
-  <!-- Modal Đăng nhập / Đăng ký -->
-  <div id="auth-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); align-items: center; justify-content: center; z-index: 2000;">
-    <div style="background: white; padding: 2rem; border-radius: 15px; width: 90%; max-width: 420px;">
-      <h3 id="modal-title">Đăng nhập</h3>
-      <input type="email" id="email" placeholder="Email" style="width:100%; padding:12px; margin:10px 0; border: 1px solid #ddd; border-radius: 8px;">
-      <input type="password" id="password" placeholder="Mật khẩu" style="width:100%; padding:12px; margin:10px 0; border: 1px solid #ddd; border-radius: 8px;">
-      <button onclick="handleAuth()" id="auth-btn-main" style="width:100%; padding:12px; background:var(--primary); color:white; border:none; border-radius:8px; margin:10px 0;">Đăng nhập</button>
-      <p onclick="toggleMode()" id="toggle-text" style="text-align:center; cursor:pointer; color:var(--primary);">Chưa có tài khoản? Đăng ký</p>
-      <button onclick="hideModal()" style="width:100%; padding:10px; background:#666; color:white; border:none; border-radius:8px;">Đóng</button>
-    </div>
+  <div style="max-width:1200px; margin:40px auto; padding:0 5%; text-align:center;">
+    <h1>Đồng Hồ Cao Cấp</h1>
+    <p>Khám phá bộ sưu tập sang trọng nhất 2026</p>
+    <div id="products-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:25px; margin-top:40px;"></div>
   </div>
 
   <script>
-    const firebaseConfig = {
+    const firebaseConfig = { /* Config của bạn */ 
       apiKey: "AIzaSyCjxu5VM_FU39wHu2kwVHuw6WMLqpshvw8",
       authDomain: "watch-store-8330b.firebaseapp.com",
       projectId: "watch-store-8330b",
@@ -140,119 +42,31 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
-    let currentUser = null;
-    let isRegisterMode = false;
-
-    // Kiểm tra trạng thái đăng nhập
-    auth.onAuthStateChanged(async (user) => {
-      currentUser = user;
-      const authSection = document.getElementById("auth-section");
-
+    auth.onAuthStateChanged(user => {
+      const section = document.getElementById("auth-section");
       if (user) {
-        authSection.innerHTML = `
-          <span style="color:white; margin-right:15px;">${user.email}</span>
-          <button class="auth-btn" onclick="logout()">Đăng xuất</button>
-        `;
+        section.innerHTML = `<span style="margin-right:15px;">${user.email}</span><button class="auth-btn" onclick="logout()">Đăng xuất</button>`;
       } else {
-        authSection.innerHTML = `
-          <button class="auth-btn" onclick="showLoginModal()">Đăng nhập</button>
-        `;
+        section.innerHTML = `<button class="auth-btn" onclick="showLogin()">Đăng nhập / Đăng ký</button>`;
       }
       loadProducts();
     });
 
-    function showLoginModal() {
-      document.getElementById("auth-modal").style.display = "flex";
-      isRegisterMode = false;
-      updateModalUI();
-    }
+    function showLogin() { alert("Modal đăng nhập sẽ được mở (bạn có thể mở rộng sau)"); }
+    function logout() { auth.signOut(); }
 
-    function hideModal() {
-      document.getElementById("auth-modal").style.display = "none";
-    }
-
-    function toggleMode() {
-      isRegisterMode = !isRegisterMode;
-      updateModalUI();
-    }
-
-    function updateModalUI() {
-      document.getElementById("modal-title").textContent = isRegisterMode ? "Đăng ký" : "Đăng nhập";
-      document.getElementById("auth-btn-main").textContent = isRegisterMode ? "Đăng ký" : "Đăng nhập";
-      document.getElementById("toggle-text").textContent = isRegisterMode 
-        ? "Đã có tài khoản? Đăng nhập" 
-        : "Chưa có tài khoản? Đăng ký";
-    }
-
-    async function handleAuth() {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      try {
-        if (isRegisterMode) {
-          const cred = await auth.createUserWithEmailAndPassword(email, password);
-          await db.collection("users").doc(cred.user.uid).set({
-            email: email,
-            role: "customer",
-            createdAt: new Date()
-          });
-          alert("Đăng ký thành công!");
-        } else {
-          await auth.signInWithEmailAndPassword(email, password);
-        }
-        hideModal();
-      } catch (error) {
-        alert("Lỗi: " + error.message);
-      }
-    }
-
-    function logout() {
-      auth.signOut();
-    }
-
-    // Load sản phẩm
     async function loadProducts() {
       const grid = document.getElementById("products-grid");
       grid.innerHTML = "";
-
-      try {
-        const snapshot = await db.collection("products").get();
-        snapshot.forEach(doc => {
-          const p = doc.data();
-          const card = document.createElement("div");
-          card.className = "product-card";
-          card.innerHTML = `
-            <img src="${p.image || 'https://via.placeholder.com/300x250?text=Watch'}" alt="${p.name}">
-            <div class="product-info">
-              <strong>${p.brand || 'Thương hiệu'}</strong>
-              <h3>${p.name}</h3>
-              <p style="color: #e63939; font-size: 1.3rem; font-weight: bold;">
-                ${Number(p.price).toLocaleString('vi-VN')} ₫
-              </p>
-              <button onclick="addToCart('${doc.id}')" style="width:100%; padding:10px; background:var(--primary); color:white; border:none; border-radius:8px; margin-top:10px;">
-                Thêm vào giỏ hàng
-              </button>
-            </div>
-          `;
-          grid.appendChild(card);
-        });
-      } catch (e) {
-        grid.innerHTML = "<p style='grid-column:1/-1; text-align:center;'>Chưa có sản phẩm nào. Vui lòng thêm sản phẩm trong trang Admin.</p>";
-      }
+      const snap = await db.collection("products").get();
+      snap.forEach(doc => {
+        const p = doc.data();
+        const div = document.createElement("div");
+        div.style.border = "1px solid #ddd"; div.style.padding = "15px"; div.style.borderRadius = "10px";
+        div.innerHTML = `<h3>${p.name}</h3><p>${p.brand} - ${Number(p.price).toLocaleString('vi-VN')} ₫</p>`;
+        grid.appendChild(div);
+      });
     }
-
-    function addToCart(productId) {
-      if (!currentUser) {
-        alert("Vui lòng đăng nhập để thêm vào giỏ hàng!");
-        showLoginModal();
-        return;
-      }
-      alert("✅ Đã thêm sản phẩm vào giỏ hàng!");
-      // Sau này có thể mở rộng lưu giỏ hàng
-    }
-
-    // Khởi chạy
-    window.onload = () => {};
   </script>
 </body>
 </html>
