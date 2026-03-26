@@ -4,14 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>WatchStore - Admin Dashboard</title>
+  
+  <!-- === 3 thẻ Firebase (giống index.html) === -->
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  
   <style>
-    body { font-family: 'Segoe UI', sans-serif; background: #f8f1e9; }
-    header { background: #111; color: white; padding: 1rem 5%; display: flex; justify-content: space-between; }
-    .logo { font-size: 1.8rem; color: #c3996b; }
-    .panel { max-width: 1200px; margin: 30px auto; padding: 20px; background: white; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+    body { font-family: 'Segoe UI', sans-serif; background: #f8f1e9; margin: 0; }
+    header { background: #111; color: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 1.8rem; color: #c3996b; font-weight: bold; }
+    .container { max-width: 1200px; margin: 30px auto; padding: 0 5%; }
+    .panel { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+    input, button { padding: 12px; margin: 8px 0; width: 100%; border-radius: 8px; }
   </style>
 </head>
 <body>
@@ -21,23 +26,25 @@
     <button onclick="logout()" style="background:#e63939; color:white; border:none; padding:10px 20px; border-radius:8px;">Đăng xuất</button>
   </header>
 
-  <div class="panel">
-    <h2>🔧 Quản trị viên Dashboard</h2>
-    <p>Xin chào Admin!</p>
+  <div class="container">
+    <div class="panel">
+      <h2>🔧 Admin Dashboard</h2>
+      <p><strong>Xin chào Admin!</strong></p>
 
-    <h3>Thêm sản phẩm mới</h3>
-    <input type="text" id="name" placeholder="Tên đồng hồ" style="width:100%; padding:10px; margin:5px 0;"><br>
-    <input type="text" id="brand" placeholder="Thương hiệu" style="width:100%; padding:10px; margin:5px 0;"><br>
-    <input type="number" id="price" placeholder="Giá (VNĐ)" style="width:100%; padding:10px; margin:5px 0;"><br>
-    <input type="text" id="image" placeholder="Link ảnh" style="width:100%; padding:10px; margin:5px 0;"><br>
-    <button onclick="addProduct()" style="padding:12px 30px; background:#c3996b; color:white; border:none;">Thêm sản phẩm</button>
+      <h3>Thêm sản phẩm mới</h3>
+      <input type="text" id="name" placeholder="Tên đồng hồ">
+      <input type="text" id="brand" placeholder="Thương hiệu (Rolex, Omega...)">
+      <input type="number" id="price" placeholder="Giá (VNĐ)">
+      <input type="text" id="image" placeholder="Link ảnh sản phẩm">
+      <button onclick="addProduct()" style="background:#c3996b; color:white; border:none; font-weight:bold;">Thêm sản phẩm</button>
 
-    <h3 style="margin-top:40px;">Danh sách sản phẩm</h3>
-    <div id="product-list"></div>
+      <h3 style="margin-top:40px;">Danh sách sản phẩm</h3>
+      <div id="product-list" style="margin-top:20px;"></div>
+    </div>
   </div>
 
   <script>
-    const firebaseConfig = { /* Dán lại cùng config như index.html */ 
+    const firebaseConfig = {
       apiKey: "AIzaSyCjxu5VM_FU39wHu2kwVHuw6WMLqpshvw8",
       authDomain: "watch-store-8330b.firebaseapp.com",
       projectId: "watch-store-8330b",
@@ -50,8 +57,10 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
 
+    // Kiểm tra quyền Admin
     auth.onAuthStateChanged(async (user) => {
       if (!user) {
+        alert("Vui lòng đăng nhập!");
         window.location.href = "index.html";
         return;
       }
@@ -63,7 +72,6 @@
         return;
       }
 
-      // Nếu là admin thì load dữ liệu
       loadAdminProducts();
     });
 
@@ -76,14 +84,25 @@
         createdAt: new Date()
       };
 
+      if (!product.name || !product.brand || !product.price) {
+        alert("Vui lòng nhập đầy đủ thông tin!");
+        return;
+      }
+
       await db.collection("products").add(product);
-      alert("Thêm sản phẩm thành công!");
+      alert("✅ Thêm sản phẩm thành công!");
+      document.getElementById("name").value = "";
+      document.getElementById("brand").value = "";
+      document.getElementById("price").value = "";
+      document.getElementById("image").value = "";
       loadAdminProducts();
     }
 
     async function loadAdminProducts() {
       const snap = await db.collection("products").get();
-      let html = "<table border='1' style='width:100%; border-collapse:collapse;'><tr><th>Tên</th><th>Thương hiệu</th><th>Giá</th><th>Hành động</th></tr>";
+      let html = `<table border="1" width="100%" style="border-collapse:collapse; text-align:left;">
+                    <tr><th>Tên</th><th>Thương hiệu</th><th>Giá</th><th>Hành động</th></tr>`;
+
       snap.forEach(doc => {
         const p = doc.data();
         html += `<tr>
@@ -94,11 +113,11 @@
         </tr>`;
       });
       html += "</table>";
-      document.getElementById("product-list").innerHTML = html;
+      document.getElementById("product-list").innerHTML = html || "<p>Chưa có sản phẩm nào.</p>";
     }
 
     async function deleteProduct(id) {
-      if (confirm("Xóa sản phẩm này?")) {
+      if (confirm("Bạn chắc chắn muốn xóa sản phẩm này?")) {
         await db.collection("products").doc(id).delete();
         loadAdminProducts();
       }
