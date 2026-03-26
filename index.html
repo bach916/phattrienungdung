@@ -1,153 +1,379 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Luxury Watch Store - 2026 Collection</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .watch-card:hover img { transform: scale(1.1); }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WatchStore - Đồng Hồ Cao Cấp</title>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <style>
+    :root {
+      --primary: #c3996b;
+      --dark: #111;
+      --light: #f8f1e9;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--light);
+      color: #333;
+      line-height: 1.6;
+    }
+    header {
+      background: var(--dark);
+      color: white;
+      padding: 1rem 5%;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    nav a {
+      color: white;
+      margin: 0 15px;
+      text-decoration: none;
+    }
+    .cart-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .hero {
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://source.unsplash.com/random/1600x900/?luxury-watch') center/cover no-repeat;
+      height: 80vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+    }
+    .hero h1 {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 5%;
+    }
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .filters select, .filters input {
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
+    }
+    .product-card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    .product-card:hover {
+      transform: translateY(-10px);
+    }
+    .product-card img {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+    }
+    .product-info {
+      padding: 1.2rem;
+    }
+    .product-info h3 {
+      margin: 0.5rem 0;
+      color: var(--dark);
+    }
+    .brand {
+      color: var(--primary);
+      font-weight: bold;
+    }
+    .price {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: #e63939;
+      margin: 10px 0;
+    }
+    .add-to-cart {
+      width: 100%;
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .cart-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    .cart-content {
+      background: white;
+      width: 90%;
+      max-width: 600px;
+      border-radius: 15px;
+      padding: 2rem;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    footer {
+      background: var(--dark);
+      color: white;
+      text-align: center;
+      padding: 3rem 0;
+      margin-top: 4rem;
+    }
+  </style>
 </head>
-<body class="bg-gray-50 text-slate-900">
+<body>
 
-    <nav class="bg-white/80 backdrop-blur-md sticky top-0 z-50 border-b border-gray-100">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-black tracking-tighter">TIMELESS<span class="text-blue-600">.</span></a>
-            <div class="flex items-center space-x-5">
-                <a href="admin.html" class="text-sm font-medium hover:text-blue-600 transition">Quản trị</a>
-                <button onclick="toggleCart()" class="relative p-2 bg-slate-900 text-white rounded-full hover:bg-slate-800 transition">
-                    <i class="fa-solid fa-cart-shopping text-sm"></i>
-                    <span id="cart-count" class="absolute -top-1 -right-1 bg-blue-500 text-[10px] w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">0</span>
-                </button>
-            </div>
-        </div>
+  <header>
+    <div class="logo">WatchStore</div>
+    <nav>
+      <a href="#">Trang chủ</a>
+      <a href="#">Sản phẩm</a>
+      <a href="#">Thương hiệu</a>
     </nav>
+    <button class="cart-btn" onclick="showCart()">🛒 Giỏ hàng (<span id="cart-count">0</span>)</button>
+  </header>
 
-    <header class="py-16 px-6 bg-slate-900 text-white text-center">
-        <span class="text-blue-400 font-bold tracking-[0.2em] text-sm uppercase">Limited Edition</span>
-        <h1 class="text-5xl font-black mt-2 mb-4">KIỆT TÁC THỜI GIAN</h1>
-        <p class="text-slate-400 max-w-2xl mx-auto"></p>
-    </header>
+  <section class="hero">
+    <div>
+      <h1>Đồng Hồ Đẳng Cấp</h1>
+      <p>Khám phá bộ sưu tập đồng hồ sang trọng nhất năm 2026</p>
+      <button onclick="document.getElementById('products').scrollIntoView({behavior: 'smooth'})" 
+              style="margin-top:20px; padding:15px 40px; font-size:1.1rem; background:var(--primary); border:none; border-radius:50px; color:white; cursor:pointer;">
+        Mua ngay
+      </button>
+    </div>
+  </section>
 
-    <main class="container mx-auto px-6 py-12">
-        <div id="product-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="col-span-full text-center py-20">
-                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent"></div>
-                <p class="mt-4 text-gray-500">Đang đồng bộ dữ liệu Firebase...</p>
-            </div>
-        </div>
-    </main>
+  <div class="container">
+    <h2 style="text-align:center; margin-bottom:2rem; color:var(--dark);">Sản phẩm nổi bật</h2>
 
-    <div id="cart-modal" class="fixed inset-0 bg-black/60 hidden z-[60] backdrop-blur-sm">
-        <div class="absolute right-0 top-0 h-full w-full max-w-md bg-white shadow-2xl flex flex-col">
-            <div class="p-6 border-b flex justify-between items-center">
-                <h3 class="text-xl font-bold">GIỎ HÀNG</h3>
-                <button onclick="toggleCart()" class="text-3xl">&times;</button>
-            </div>
-            <div id="cart-items" class="flex-grow p-6 overflow-y-auto space-y-4"></div>
-            <div class="p-6 border-t bg-gray-50">
-                <div class="flex justify-between text-2xl font-black mb-6">
-                    <span>Tổng tiền:</span>
-                    <span id="cart-total" class="text-blue-600">0đ</span>
-                </div>
-                <button class="w-full bg-slate-900 text-white py-4 rounded-xl font-bold hover:bg-blue-600 transition uppercase tracking-widest">Thanh toán ngay</button>
-            </div>
-        </div>
+    <div class="filters">
+      <input type="text" id="search" placeholder="Tìm kiếm đồng hồ..." onkeyup="filterProducts()">
+      <select id="brandFilter" onchange="filterProducts()" title="Lọc theo thương hiệu">
+        <option value="">Tất cả thương hiệu</option>
+      </select>
+      <select id="priceFilter" onchange="filterProducts()" title="Lọc theo mức giá">
+        <option value="">Tất cả giá</option>
+        <option value="low">Dưới 5 triệu</option>
+        <option value="mid">5 - 15 triệu</option>
+        <option value="high">Trên 15 triệu</option>
+      </select>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getFirestore, collection, onSnapshot, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    <div class="products-grid" id="products-grid">
+      <!-- Sản phẩm sẽ được load bằng JS -->
+    </div>
+  </div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCjxu5VM_FU39wHu2kwVHuw6WMLqpshvw8",
-            authDomain: "watch-store-8330b.firebaseapp.com",
-            projectId: "watch-store-8330b",
-            storageBucket: "watch-store-8330b.firebasestorage.app",
-            messagingSenderId: "473256087916",
-            appId: "1:473256087916:web:fc82fd400ba3dff01ce349"
-        };
+  <!-- Modal Giỏ hàng -->
+  <div class="cart-modal" id="cart-modal">
+    <div class="cart-content">
+      <h2>Giỏ hàng của bạn</h2>
+      <div id="cart-items"></div>
+      <h3 style="margin-top:20px;">Tổng tiền: <span id="cart-total">0</span> VNĐ</h3>
+      <div style="margin-top:20px; display:flex; gap:10px;">
+        <button onclick="hideCart()" style="flex:1; padding:12px; background:#666; color:white; border:none; border-radius:8px;">Đóng</button>
+        <button onclick="checkout()" style="flex:1; padding:12px; background:#e63939; color:white; border:none; border-radius:8px;">Thanh toán</button>
+      </div>
+    </div>
+  </div>
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const container = document.getElementById('product-container');
+  <footer>
+    <p>&copy; 2026 WatchStore - Cửa hàng đồng hồ chính hãng tại Hải Phòng</p>
+  </footer>
 
-        // 14 Dữ liệu mẫu cực đẹp
-        const dummyData = [
-            { name: "Rolex Submariner Date", price: 350000000, image: "https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&w=800" },
-            { name: "Omega Speedmaster", price: 185000000, image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800" },
-            { name: "Patek Philippe Nautilus", price: 2100000000, image: "https://images.unsplash.com/photo-1614164185128-e4ec99c436d7?auto=format&fit=crop&w=800" },
-            { name: "Seiko Prospex Save Ocean", price: 12500000, image: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=800" },
-            { name: "Tissot Le Locle Classic", price: 15800000, image: "https://images.unsplash.com/photo-1533139502658-0198f920d8e8?auto=format&fit=crop&w=800" },
-            { name: "Cartier Santos Dumont", price: 145000000, image: "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800" },
-            { name: "IWC Portugieser Blue", price: 215000000, image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&w=800" },
-            { name: "Grand Seiko Heritage", price: 135000000, image: "https://images.unsplash.com/photo-1619134769735-51975975837d?auto=format&fit=crop&w=800" },
-            { name: "Hublot Big Bang Unico", price: 480000000, image: "https://images.unsplash.com/photo-1612817159949-195b6eb9e31a?auto=format&fit=crop&w=800" },
-            { name: "Longines Master Col.", price: 55000000, image: "https://images.unsplash.com/photo-1617345311027-4f964299b802?auto=format&fit=crop&w=800" },
-            { name: "Tag Heuer Carrera", price: 95000000, image: "https://images.unsplash.com/photo-1585123334904-845d60e97b29?auto=format&fit=crop&w=800" },
-            { name: "Zenith El Primero", price: 220000000, image: "https://images.unsplash.com/photo-1548171916-042ad9ec579a?auto=format&fit=crop&w=800" },
-            { name: "Breitling Navitimer", price: 195000000, image: "https://images.unsplash.com/photo-1622434641406-a158123450f9?auto=format&fit=crop&w=800" },
-            { name: "Tudor Black Bay 58", price: 88000000, image: "https://images.unsplash.com/photo-1615655093950-398d50611383?auto=format&fit=crop&w=800" }
-        ];
+  <script>
+    // === Firebase Config (bạn cung cấp) ===
+    const firebaseConfig = {
+      apiKey: "AIzaSyCjxu5VM_FU39wHu2kwVHuw6WMLqpshvw8",
+      authDomain: "watch-store-8330b.firebaseapp.com",
+      projectId: "watch-store-8330b",
+      storageBucket: "watch-store-8330b.firebasestorage.app",
+      messagingSenderId: "473256087916",
+      appId: "1:473256087916:web:fc82fd400ba3dff01ce349",
+      measurementId: "G-5DFX112P5C"
+    };
 
-        // Tự động nạp dữ liệu nếu trống
-        async function autoSeed() {
-            const snap = await getDocs(collection(db, "watches"));
-            if (snap.empty) {
-                for (const watch of dummyData) {
-                    await addDoc(collection(db, "watches"), watch);
-                }
-            }
-        }
-        autoSeed();
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
 
-        // Hiển thị sản phẩm real-time
-        onSnapshot(collection(db, "watches"), (snapshot) => {
-            container.innerHTML = "";
-            snapshot.forEach((doc) => {
-                const item = doc.data();
-                container.innerHTML += `
-                    <div class="bg-white rounded-2xl p-4 shadow-sm hover:shadow-2xl transition-all group watch-card border border-gray-100">
-                        <div class="overflow-hidden rounded-xl h-60 bg-gray-50 mb-4">
-                            <img src="${item.image}" class="w-full h-full object-cover transition duration-500">
-                        </div>
-                        <h3 class="font-bold text-gray-800 line-clamp-1">${item.name}</h3>
-                        <div class="flex justify-between items-center mt-4">
-                            <span class="text-blue-600 font-black">${item.price.toLocaleString()}đ</span>
-                            <button onclick="addToCart('${item.name}', ${item.price})" class="bg-slate-900 text-white w-10 h-10 rounded-lg hover:bg-blue-600 transition flex items-center justify-center">
-                                <i class="fa-solid fa-plus text-xs"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-            });
-        });
+    let products = [];
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-        // Giỏ hàng
-        window.cart = [];
-        window.toggleCart = () => document.getElementById('cart-modal').classList.toggle('hidden');
-        window.addToCart = (name, price) => {
-            cart.push({name, price});
-            renderCart();
-            if(document.getElementById('cart-modal').classList.contains('hidden')) toggleCart();
-        };
+    // Load sản phẩm từ Firestore
+    async function loadProducts() {
+      const snapshot = await db.collection("products").get();
+      products = [];
+      snapshot.forEach(doc => {
+        products.push({ id: doc.id, ...doc.data() });
+      });
 
-        function renderCart() {
-            const list = document.getElementById('cart-items');
-            document.getElementById('cart-count').innerText = cart.length;
-            list.innerHTML = cart.map((item, index) => `
-                <div class="flex justify-between items-center bg-gray-50 p-4 rounded-xl">
-                    <div><p class="font-bold text-sm">${item.name}</p><p class="text-blue-600">${item.price.toLocaleString()}đ</p></div>
-                    <button onclick="cart.splice(${index},1); renderCart()" class="text-red-400 p-2"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            `).join('');
-            const total = cart.reduce((sum, i) => sum + i.price, 0);
-            document.getElementById('cart-total').innerText = total.toLocaleString() + "đ";
-        }
-    </script>
+      // Tạo danh sách thương hiệu động
+      const brands = [...new Set(products.map(p => p.brand))];
+      const brandSelect = document.getElementById('brandFilter');
+      brands.forEach(brand => {
+        const opt = document.createElement('option');
+        opt.value = brand;
+        opt.textContent = brand;
+        brandSelect.appendChild(opt);
+      });
+
+      renderProducts(products);
+    }
+
+    // Render sản phẩm
+    function renderProducts(filteredProducts) {
+      const grid = document.getElementById('products-grid');
+      grid.innerHTML = '';
+
+      filteredProducts.forEach(product => {
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <img src="${product.image || 'https://via.placeholder.com/300x280?text=Watch'}" alt="${product.name}">
+          <div class="product-info">
+            <span class="brand">${product.brand}</span>
+            <h3>${product.name}</h3>
+            <div class="price">${Number(product.price).toLocaleString('vi-VN')} VNĐ</div>
+            <p style="font-size:0.9rem; color:#666; margin:10px 0;">${product.description || ''}</p>
+            <button class="add-to-cart" onclick="addToCart('${product.id}')">Thêm vào giỏ</button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // Thêm vào giỏ
+    function addToCart(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      const existing = cart.find(item => item.id === product.id);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ ...product, quantity: 1 });
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+      alert(`${product.name} đã được thêm vào giỏ hàng!`);
+    }
+
+    function updateCartCount() {
+      const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cart-count').textContent = count;
+    }
+
+    // Hiển thị giỏ hàng
+    function showCart() {
+      const modal = document.getElementById('cart-modal');
+      const itemsDiv = document.getElementById('cart-items');
+      let html = '';
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        html += `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin:15px 0; padding-bottom:15px; border-bottom:1px solid #eee;">
+            <div>
+              <strong>${item.name}</strong><br>
+              <small>${item.brand} × ${item.quantity}</small>
+            </div>
+            <div style="text-align:right;">
+              <div>${itemTotal.toLocaleString('vi-VN')} VNĐ</div>
+              <button onclick="removeFromCart(${index})" style="background:none; border:none; color:#e63939; cursor:pointer;">Xóa</button>
+            </div>
+          </div>
+        `;
+      });
+
+      itemsDiv.innerHTML = html || '<p>Giỏ hàng trống</p>';
+      document.getElementById('cart-total').textContent = total.toLocaleString('vi-VN');
+      modal.style.display = 'flex';
+    }
+
+    function hideCart() {
+      document.getElementById('cart-modal').style.display = 'none';
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+      showCart();
+    }
+
+    function checkout() {
+      if (cart.length === 0) return alert("Giỏ hàng trống!");
+      alert("Cảm ơn bạn đã mua hàng! (Chức năng thanh toán sẽ được tích hợp sau)");
+      cart = [];
+      localStorage.setItem('cart', JSON.stringify(cart));
+      updateCartCount();
+      hideCart();
+    }
+
+    // Lọc sản phẩm
+    function filterProducts() {
+      const searchTerm = document.getElementById('search').value.toLowerCase();
+      const brand = document.getElementById('brandFilter').value;
+      const priceFilter = document.getElementById('priceFilter').value;
+
+      let filtered = products.filter(product => {
+        const matchSearch = product.name.toLowerCase().includes(searchTerm) || 
+                           (product.brand && product.brand.toLowerCase().includes(searchTerm));
+        const matchBrand = !brand || product.brand === brand;
+
+        let matchPrice = true;
+        if (priceFilter === 'low') matchPrice = product.price < 5000000;
+        else if (priceFilter === 'mid') matchPrice = product.price >= 5000000 && product.price <= 15000000;
+        else if (priceFilter === 'high') matchPrice = product.price > 15000000;
+
+        return matchSearch && matchBrand && matchPrice;
+      });
+
+      renderProducts(filtered);
+    }
+
+    // Khởi chạy
+    window.onload = () => {
+      loadProducts();
+      updateCartCount();
+    };
+  </script>
 </body>
 </html>
