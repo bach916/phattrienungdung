@@ -2,46 +2,56 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <title>Quản lý kho hàng</title>
+    <title>Admin - Quản Lý Kho Hàng</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-50 min-h-screen p-6">
-    <div class="max-w-6xl mx-auto">
-        <div class="flex justify-between items-center mb-10">
-            <h1 class="text-2xl font-black">HỆ THỐNG QUẢN TRỊ</h1>
-            <div class="space-x-4">
-                <a href="index.html" class="text-blue-600 font-bold underline">Xem Shop</a>
-                <button onclick="logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-lg shadow-red-200">Đăng xuất</button>
-            </div>
+<body class="bg-slate-100 min-h-screen p-4 md:p-10">
+
+    <div class="max-w-5xl mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-black text-slate-800">HỆ THỐNG QUẢN TRỊ</h1>
+            <a href="index.html" class="text-blue-600 hover:underline"><i class="fa-solid fa-arrow-left"></i> Xem cửa hàng</a>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-fit">
-                <h2 id="form-title" class="text-lg font-bold mb-6 text-blue-600 uppercase">Thêm sản phẩm</h2>
-                <form id="p-form" class="space-y-4">
-                    <input type="hidden" id="p-id">
-                    <input type="text" id="p-name" placeholder="Tên đồng hồ" class="w-full border p-3 rounded-xl outline-none focus:border-blue-500" required>
-                    <input type="number" id="p-price" placeholder="Giá VNĐ" class="w-full border p-3 rounded-xl outline-none focus:border-blue-500" required>
-                    <input type="text" id="p-image" placeholder="Link ảnh (URL)" class="w-full border p-3 rounded-xl outline-none focus:border-blue-500" required>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm h-fit sticky top-10">
+                <h2 id="form-title" class="text-xl font-bold mb-6 text-blue-600">Thêm sản phẩm mới</h2>
+                <form id="product-form" class="space-y-4">
+                    <input type="hidden" id="product-id">
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Tên đồng hồ</label>
+                        <input type="text" id="name" class="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-blue-500 outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Giá (VNĐ)</label>
+                        <input type="number" id="price" class="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-blue-500 outline-none" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase text-gray-400 mb-1">Link ảnh</label>
+                        <input type="text" id="image" class="w-full border-2 border-gray-100 p-3 rounded-xl focus:border-blue-500 outline-none" required>
+                    </div>
                     <div class="flex gap-2">
-                        <button type="submit" id="btn-save" class="flex-grow bg-blue-600 text-white py-3 rounded-xl font-bold">LƯU LẠI</button>
-                        <button type="button" id="btn-cancel" class="hidden bg-gray-200 px-4 rounded-xl" onclick="resetF()">Hủy</button>
+                        <button type="submit" id="btn-submit" class="flex-grow bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition">LƯU SẢN PHẨM</button>
+                        <button type="button" id="btn-cancel" class="hidden bg-gray-200 text-gray-600 px-4 rounded-xl hover:bg-gray-300" onclick="resetForm()">Hủy</button>
                     </div>
                 </form>
             </div>
 
-            <div class="lg:col-span-2 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                <table class="w-full text-left">
-                    <thead class="bg-slate-900 text-white text-xs uppercase">
-                        <tr>
-                            <th class="p-4">Sản phẩm</th>
-                            <th class="p-4">Giá</th>
-                            <th class="p-4 text-right">Thao tác</th>
-                        </tr>
-                    </thead>
-                    <tbody id="p-list" class="divide-y divide-gray-50 text-sm"></tbody>
-                </table>
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+                    <table class="w-full text-left">
+                        <thead class="bg-slate-900 text-white text-sm uppercase">
+                            <tr>
+                                <th class="p-4">Ảnh</th>
+                                <th class="p-4">Thông tin</th>
+                                <th class="p-4 text-right">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-product-list" class="divide-y divide-gray-100">
+                            </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -49,90 +59,94 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getFirestore, collection, onSnapshot, addDoc, deleteDoc, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-const auth = getAuth(app);
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjxu5VM_FU39wHu2kwVHuw6WMLqpshvw8",
+            authDomain: "watch-store-8330b.firebaseapp.com",
+            projectId: "watch-store-8330b",
+            storageBucket: "watch-store-8330b.firebasestorage.app",
+            messagingSenderId: "473256087916",
+            appId: "1:473256087916:web:fc82fd400ba3dff01ce349"
+        };
 
-// Kiểm tra trạng thái đăng nhập
-onAuthStateChanged(auth, (user) => {
-    if (!user) {
-        // Nếu không có user, quay lại trang login
-        window.location.href = "login.html";
-    }
-});
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const productList = document.getElementById('admin-product-list');
+        const productForm = document.getElementById('product-form');
 
-// Thêm chức năng Đăng xuất (Tùy chọn)
-window.logout = () => {
-    signOut(auth).then(() => {
-        window.location.href = "login.html";
-    });
-};
-// Kiểm tra trạng thái đăng nhập
-onAuthStateChanged(auth, (user) => {
-    if (!user) {
-        // Nếu không có user, quay lại trang login
-        window.location.href = "login.html";
-    }
-});
-
-// Thêm chức năng Đăng xuất (Tùy chọn)
-window.logout = () => {
-    signOut(auth).then(() => {
-        window.location.href = "login.html";
-    });
-};
-
-        // HIỂN THỊ DANH SÁCH
-        onSnapshot(collection(db, "watches"), (snap) => {
-            const list = document.getElementById('p-list');
-            list.innerHTML = "";
-            snap.forEach(d => {
-                const item = d.data();
-                list.innerHTML += `
-                    <tr>
-                        <td class="p-4 flex items-center gap-3">
-                            <img src="${item.image}" class="w-12 h-12 object-cover rounded-md border">
-                            <span class="font-bold">${item.name}</span>
+        // 1. HIỂN THỊ DANH SÁCH & LẮNG NGHE THAY ĐỔI
+        onSnapshot(collection(db, "watches"), (snapshot) => {
+            productList.innerHTML = "";
+            snapshot.forEach((val) => {
+                const item = val.data();
+                productList.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-4"><img src="${item.image}" class="w-16 h-16 object-cover rounded-lg border"></td>
+                        <td class="p-4">
+                            <p class="font-bold text-slate-800">${item.name}</p>
+                            <p class="text-blue-600 text-sm font-semibold">${item.price.toLocaleString()}đ</p>
                         </td>
-                        <td class="p-4 font-semibold text-blue-600">${item.price.toLocaleString()}đ</td>
                         <td class="p-4 text-right space-x-2">
-                            <button onclick="prepEdit('${d.id}', '${item.name}', ${item.price}, '${item.image}')" class="text-amber-500 hover:underline">Sửa</button>
-                            <button onclick="delP('${d.id}')" class="text-red-500 hover:underline">Xóa</button>
+                            <button onclick="editProduct('${val.id}', '${item.name}', ${item.price}, '${item.image}')" class="text-amber-500 hover:bg-amber-50 p-2 rounded-lg transition"><i class="fa-solid fa-pen-to-square"></i> Sửa</button>
+                            <button onclick="deleteProduct('${val.id}')" class="text-red-500 hover:bg-red-50 p-2 rounded-lg transition"><i class="fa-solid fa-trash"></i> Xóa</button>
                         </td>
                     </tr>
                 `;
             });
         });
 
-        // THÊM/SỬA
-        document.getElementById('p-form').onsubmit = async (e) => {
+        // 2. XỬ LÝ THÊM HOẶC CẬP NHẬT
+        productForm.onsubmit = async (e) => {
             e.preventDefault();
-            const id = document.getElementById('p-id').value;
+            const id = document.getElementById('product-id').value;
             const data = {
-                name: document.getElementById('p-name').value,
-                price: Number(document.getElementById('p-price').value),
-                image: document.getElementById('p-image').value
+                name: document.getElementById('name').value,
+                price: Number(document.getElementById('price').value),
+                image: document.getElementById('image').value
             };
-            if(id) await updateDoc(doc(db, "watches", id), data);
-            else await addDoc(collection(db, "watches"), data);
-            resetF();
+
+            try {
+                if (id) {
+                    // Cập nhật sản phẩm cũ
+                    await updateDoc(doc(db, "watches", id), data);
+                    alert("Đã cập nhật thành công!");
+                } else {
+                    // Thêm sản phẩm mới
+                    await addDoc(collection(db, "watches"), data);
+                    alert("Đã thêm sản phẩm mới!");
+                }
+                resetForm();
+            } catch (err) { alert("Lỗi: " + err.message); }
         };
 
-        window.delP = async (id) => { if(confirm("Xóa sản phẩm này?")) await deleteDoc(doc(db, "watches", id)); };
-        window.prepEdit = (id, n, p, i) => {
-            document.getElementById('p-id').value = id;
-            document.getElementById('p-name').value = n;
-            document.getElementById('p-price').value = p;
-            document.getElementById('p-image').value = i;
-            document.getElementById('form-title').innerText = "Đang chỉnh sửa";
+        // 3. XÓA SẢN PHẨM
+        window.deleteProduct = async (id) => {
+            if (confirm("Bạn có chắc chắn muốn xóa sản phẩm này không?")) {
+                await deleteDoc(doc(db, "watches", id));
+            }
+        };
+
+        // 4. CHUẨN BỊ SỬA SẢN PHẨM
+        window.editProduct = (id, name, price, image) => {
+            document.getElementById('product-id').value = id;
+            document.getElementById('name').value = name;
+            document.getElementById('price').value = price;
+            document.getElementById('image').value = image;
+            
+            document.getElementById('form-title').innerText = "Đang sửa sản phẩm";
+            document.getElementById('btn-submit').innerText = "CẬP NHẬT NGAY";
             document.getElementById('btn-cancel').classList.remove('hidden');
         };
-        window.resetF = () => {
-            document.getElementById('p-form').reset();
-            document.getElementById('p-id').value = "";
-            document.getElementById('form-title').innerText = "Thêm sản phẩm";
+
+        // 5. RESET FORM
+        window.resetForm = () => {
+            productForm.reset();
+            document.getElementById('product-id').value = "";
+            document.getElementById('form-title').innerText = "Thêm sản phẩm mới";
+            document.getElementById('btn-submit').innerText = "LƯU SẢN PHẨM";
             document.getElementById('btn-cancel').classList.add('hidden');
         };
+        
     </script>
 </body>
 </html>
