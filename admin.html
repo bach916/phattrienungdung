@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Quản Lý Sản Phẩm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md bg-white p-8 rounded-2xl shadow-xl">
+        <h2 class="text-2xl font-black mb-6 text-center">THÊM ĐỒNG HỒ</h2>
+        <form id="addForm" class="space-y-4">
+            <input type="text" id="name" placeholder="Tên sản phẩm" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" required>
+            <input type="number" id="price" placeholder="Giá tiền (VNĐ)" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" required>
+            <input type="text" id="image" placeholder="Link ảnh (URL)" class="w-full border p-3 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" required>
+            <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition shadow-lg shadow-blue-200">ĐĂNG BÁN NGAY</button>
+        </form>
+        <a href="index.html" class="block text-center mt-6 text-gray-400 hover:text-gray-600 italic">← Quay lại trang chủ</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCjxu5VM_FU39wHu2kwVHuw6WMLqpshvw8",
+            authDomain: "watch-store-8330b.firebaseapp.com",
+            projectId: "watch-store-8330b",
+            storageBucket: "watch-store-8330b.firebasestorage.app",
+            messagingSenderId: "473256087916",
+            appId: "1:473256087916:web:fc82fd400ba3dff01ce349"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        document.getElementById('addForm').onsubmit = async (e) => {
+            e.preventDefault();
+            try {
+                await addDoc(collection(db, "watches"), {
+                    name: document.getElementById('name').value,
+                    price: Number(document.getElementById('price').value),
+                    image: document.getElementById('image').value,
+                    timestamp: new Date()
+                });
+                alert("Đã thêm thành công!");
+                e.target.reset();
+            } catch (error) { alert("Lỗi: " + error.message); }
+        };
+    </script>
+</body>
+</html>
